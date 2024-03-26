@@ -1,0 +1,31 @@
+  # this will get the variable type e.g.
+            if token == 0:
+               print('Variable type: ' + token_value)
+
+            if token == 4 and token_type == 'STATEMENT_END':
+                print('Statement_end: ' + token_value)
+                break
+
+
+            elif token == 4 and token_type!= 'STATEMENT_END':
+                print('Error: Statement terminator is missing at line number:' +str(line_number) )
+                print(len(token_stream))
+                quit()
+
+            elif token == 1 and token_type == 'IDENTIFIER':
+                print('Identifier value: ' + token_value)
+            elif token == 1 and token_type != 'IDENTIFIER':
+                print("ERROR: Invalid variable name '" + token_value + "at line number:"+str(line_number))
+                quit()
+
+            elif token == 2 and token_type == "ASSIGNMENT_OPERATOR":
+                print('Assignment operator: ' + token_value)
+            elif token == 2 and token_type != "ASSIGNMENT_OPERATOR":
+                print("ERROR: Assignment operator is missing at line number:"+ str(line_number))
+                quit()
+
+            elif token == 3 and (token_type == 'IDENTIFIER' or re.search(r'_VALUE$', token_type)):
+                print('Assignment value:' + token_value)
+            elif token == 3 and (token_type != 'IDENTIFIER' or re.search(r'_VALUE$', token_type,flags=1)):
+                print("ERROR: Invalid variable assignment value '" + token_value + "' at line number:" + str(line_number))
+                quit()
