@@ -1,59 +1,48 @@
 import re
 
-def lex(code):
-    # Lista de tokens e símbolos
+def lexico(code):
     tokens = []
     symbols = set()
-    
-    # Expressões regulares para os diferentes tipos de tokens
-    token_expressions = [
-        ('COMMENT', r'#[^\n]*'),        # Comentários
-        ('STRING', r'\".*?\"'),         # Strings
-        ('NUMBER', r'\d+(\.\d+)?'),     # Números
-        ('NEWLINE', r'\n'),             # Nova linha
-        ('INDENT', r'\s{4}'),           # Indentação (4 espaços)
-        ('DEDENT', r'\n(?=\S)'),        # Dedentação
-        ('SYMBOL', r'[\(\)\{\}\[\]\.\,\:\;\=\+\-\*\/\<\>\!\&\|\%\@\#]'),  # Símbolos
-        ('NAME', r'[a-zA-Z_][a-zA-Z0-9_]*'),  # Identificadores
+
+    expressoes_tokens = [
+        ('STRING', r'\".*?\"'),
+        ('NUMERO', r'\d+(\.\d+)?'),
+        ('NOVA_LINHA', r'\n'),
+        ('INDENTACAO', r'\s{4}'),
+        ('DEDENTACAO', r'\n(?=\S)'),
+        ('SIMBOLO', r'[\(\)\{\}\[\]\.\,\:\;\=\+\-\*\/\<\>\!\&\|\%\@\#]'),
+        ('NOME', r'[a-zA-Z_][a-zA-Z0-9_]*'),
     ]
-    
-    # Combinando todas as expressões regulares
-    combined_expressions = '|'.join('(?P<%s>%s)' % pair for pair in token_expressions)
-    pattern = re.compile(combined_expressions)
-    
-    # Encontrando os tokens na entrada
-    for match in pattern.finditer(code):
-        token_type = match.lastgroup
-        token_value = match.group()
-        
-        # Ignorar nova linha e indentação
-        if token_type == 'NEWLINE' or token_type == 'INDENT':
+
+    expressoes_combinadas = '|'.join('(?P<%s>%s)' % par for par in expressoes_tokens)
+    padrao = re.compile(expressoes_combinadas)
+
+    for correspondencia in padrao.finditer(code):
+        tipo_token = correspondencia.lastgroup
+        valor_token = correspondencia.group()
+
+        if tipo_token == 'NOVA_LINHA' or tipo_token == 'INDENTACAO':
             continue
-        
-        # Adicionar token à lista de tokens
-        tokens.append((token_type, token_value))
-        
-        # Adicionar símbolo à lista de símbolos, se for um
-        if token_type == 'SYMBOL':
-            symbols.add(token_value)
-    
+
+        tokens.append((tipo_token, valor_token))
+
+        if tipo_token == 'SIMBOLO':
+            symbols.add(valor_token)
+
     return tokens, list(symbols)
 
-# Teste
-code = '''
-def fibonacci(n):
-    a, b = 0, 1
-    while a < n:
-        print(a)
-        a, b = b, a + b
-    return a
+def salvar_tokens(tokens, nome_arquivo):
+    with open(nome_arquivo, 'w') as arquivo:
+        for token in tokens:
+            arquivo.write(f"{token}\n")
 
-print(fibonacci(10))
+codigo = '''
+def FalaAssis(nome):
+    return "Olá, " + nome + "!"
+
+print(FalaAssis("Mundo"))
 '''
 
-tokens, symbols = lex(code)
-print("Tokens:")
-for token in tokens:
-    print(token)
-print("\nSímbolos:")
-print(symbols)
+tokens, simbolos = lexico(codigo)
+print("Tokens salvos em 'tokens.txt'.")
+salvar_tokens(tokens, 'tokens.txt')
